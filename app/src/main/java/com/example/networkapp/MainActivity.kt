@@ -14,6 +14,11 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.squareup.picasso.Picasso
 import org.json.JSONObject
+import java.io.BufferedReader
+import java.io.File
+import java.io.FileOutputStream
+import java.io.FileReader
+import java.io.IOException
 
 // TODO (1: Fix any bugs)
 // TODO (2: Add function saveComic(...) to save comic info when downloaded
@@ -27,6 +32,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var numberEditText: EditText
     lateinit var showButton: Button
     lateinit var comicImageView: ImageView
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,7 +49,13 @@ class MainActivity : AppCompatActivity() {
         showButton.setOnClickListener {
             downloadComic(numberEditText.text.toString())
         }
-
+        val fileName = "saved_comic.json"
+        val file = File(filesDir, fileName)
+        try {
+            saveComic(JSONObject(file.readText()))
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
     }
 
     // Fetches comic from web as JSONObject
@@ -66,6 +78,14 @@ class MainActivity : AppCompatActivity() {
 
     // Implement this function
     private fun saveComic(comicObject: JSONObject) {
+        val fileName = "saved_comic.json"
+        try {
+            openFileOutput(fileName, MODE_PRIVATE).use{ outputStream ->
+                outputStream.write(comicObject.toString().toByteArray())
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
 
     }
 
